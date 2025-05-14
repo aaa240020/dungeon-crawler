@@ -4,6 +4,10 @@ class Crawler:
 
     def __init__(self):
 
+        self.resolution = (800,600)
+        self.fullscreen_resolution = (1920,1080)
+        self.fullscreen = False
+
         pygame.init()
         self.screen = pygame.display.set_mode((self.resolution))
         pygame.display.set_caption("Crawler")
@@ -12,9 +16,6 @@ class Crawler:
     def main(self):
 
         running = True
-        self.resolution = (800,600)
-        self.fullscreen_resolution = (1920,1080)
-        self.fullscreen = False
 
         while running:
             for event in pygame.event.get():
@@ -31,6 +32,10 @@ class Crawler:
             color = pygame.Color(0, 255, 255)
             self.screen.fill(color)
             pygame.display.update()
-            self.clock.tick(24)
+            self.time.tick(24)
 
         pygame.quit()
+
+if __name__ == "__main__":
+    game = Crawler()
+    game.main()
