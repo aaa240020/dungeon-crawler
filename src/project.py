@@ -1,6 +1,20 @@
 import pygame
 from map import *
 
+class SpriteTexture(pygame.sprite.Sprite):
+
+    def __init__(self,pos,groups):
+        super().__init__(groups)
+        self.image = pygame.image.load('../textures/sprite_texture_test.png')
+        self.rect = self.image.get_rect(topleft = pos)
+
+class MainCharacter():
+
+    def __init__(self,pos,groups):
+        super().__init__(groups)
+        self.image = pygame.image.load('../textures/player_test.png')
+        self.rect = self.image.get_rect(topleft = pos)
+
 class World:
 
     def __init__(self):
@@ -18,15 +32,13 @@ class World:
                 x = cindex * tile_size
                 y = rindex * tile_size
                 if col == 'x':
-                    SpriteTexture((x,y),[self.sprites])
+                    SpriteTexture((x,y),[self.sprites, self.obstacles])
                 if col == '0':
+                    MainCharacter((x,y),[self.sprites])
     
     def main(self):
 
         self.sprites.draw(self.surface)
-
-
-#class Main_Character:
 
 class Crawler:
 
@@ -59,8 +71,11 @@ class Crawler:
                         else:
                             self.screen = pygame.display.set_mode(self.resolution)
 
-            color = pygame.Color(0, 255, 255)
+            color = pygame.Color(0, 0, 0)
             self.screen.fill(color)
+
+            self.world.main()
+
             pygame.display.update()
             self.time.tick(60)
 
