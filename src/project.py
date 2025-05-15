@@ -16,23 +16,28 @@ class MainCharacter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
 
         self.direction = pygame.math.Vector2()
+        self.speed = 1
 
     def movement(self):
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    self.direction.y = -1
-                elif event.key == pygame.K_DOWN:
-                    self.direction.y = 1
-                else:
-                    self.direction.y = 0
+        
+        key = pygame.key.get_pressed()
+        
+        if key == [pygame.K_w]:
+            self.direction.y = -1
+        elif key == [pygame.K_s]:
+            self.direction.y = 1
+        else:
+            self.direction.y = 0
                 
-                if event.key == pygame.K_LEFT:
-                    self.direction.x = 1
-                elif event.key == pygame.K_RIGHT:
-                    self.direction.x = -1
-                else:
-                    self.direction.y = 0
+        if key == [pygame.K_a]:
+            self.direction.x = 1
+        elif key == [pygame.K_d]:
+            self.direction.x = -1
+        else:
+            self.direction.y = 0
+
+        self.rect.x += self.direction.x * self.speed
+        self.rect.y += self.direction.y * self.speed
 
 class World:
 
