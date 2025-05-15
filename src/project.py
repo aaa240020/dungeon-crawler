@@ -10,13 +10,15 @@ class SpriteTexture(pygame.sprite.Sprite):
 
 class MainCharacter(pygame.sprite.Sprite):
 
-    def __init__(self,pos,groups):
+    def __init__(self,pos,groups,obstacle):
         super().__init__(groups)
         self.image = pygame.image.load('../textures/player_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
         self.direction = pygame.math.Vector2()
         self.speed = 5
+
+        self.obstacle = obstacle
 
     def key_input(self):
         key = pygame.key.get_pressed()
@@ -36,9 +38,10 @@ class MainCharacter(pygame.sprite.Sprite):
             self.direction.x = 0
 
     def movement(self,speed):
-        
-        self.rect.x += self.direction.x * speed
-        self.rect.y += self.direction.y * speed
+        if self.direction.magnitude() != 0:
+            self.direction = self.direction.normalize()
+
+        self.rect.center += self.direction * speed
 
     def update(self):
         self.key_input()
@@ -63,7 +66,7 @@ class World:
                 if col == 'x':
                     SpriteTexture((x,y),[self.sprites, self.obstacles])
                 if col == '0':
-                    self.character = MainCharacter((x,y),[self.sprites])
+                    self.character = MainCharacter((x,y),[self.sprites], self.obstacle)
     
     def main(self):
 
