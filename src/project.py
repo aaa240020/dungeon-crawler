@@ -39,7 +39,21 @@ class MainCharacter(pygame.sprite.Sprite):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
 
-        self.rect.center += self.direction * speed
+        self.rect.x += self.direction.x * speed
+        for index, sprite in enumerate(self.groups()[1]):
+            if sprite.rect.colliderect(self.rect):
+                if self.direction.x > 0:
+                    self.rect.right = sprite.rect.left
+                elif self.direction.x < 0:
+                    self.rect.left = sprite.rect.right
+
+        self.rect.y += self.direction.y * speed
+        for index, sprite in enumerate(self.groups()[1]):
+            if sprite.rect.colliderect(self.rect):
+                if self.direction.y > 0:
+                    self.rect.bottom = sprite.rect.top
+                elif self.direction.y < 0:
+                    self.rect.top = sprite.rect.bottom
 
     def update(self):
         self.key_input()
@@ -48,7 +62,7 @@ class MainCharacter(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, groups):
         super().__init__(groups)
-        self.image = pygame.image.load('../textures/enemy.png').convert_alpha()
+        self.image = pygame.image.load('../textures/enemy_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         
         self.direction = pygame.math.Vector2()
