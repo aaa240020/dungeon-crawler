@@ -15,6 +15,25 @@ class MainCharacter(pygame.sprite.Sprite):
         self.image = pygame.image.load('../textures/player_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
+        self.direction = pygame.math.Vector2()
+
+    def movement(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.direction.y = -1
+                elif event.key == pygame.K_DOWN:
+                    self.direction.y = 1
+                else:
+                    self.direction.y = 0
+                
+                if event.key == pygame.K_LEFT:
+                    self.direction.x = 1
+                elif event.key == pygame.K_RIGHT:
+                    self.direction.x = -1
+                else:
+                    self.direction.y = 0
+
 class World:
 
     def __init__(self):
@@ -34,11 +53,13 @@ class World:
                 if col == 'x':
                     SpriteTexture((x,y),[self.sprites, self.obstacles])
                 if col == '0':
-                    MainCharacter((x,y),[self.sprites])
+                    self.character = MainCharacter((x,y),[self.sprites])
     
     def main(self):
 
         self.sprites.draw(self.surface)
+        self.sprites.update()
+        print(self.character.direction)
 
 class Crawler:
 
