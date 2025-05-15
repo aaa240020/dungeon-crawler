@@ -5,14 +5,14 @@ class SpriteTexture(pygame.sprite.Sprite):
 
     def __init__(self,pos,groups):
         super().__init__(groups)
-        self.image = pygame.image.load('../textures/sprite_texture_test.png')
+        self.image = pygame.image.load('../textures/sprite_texture_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
-class MainCharacter():
+class MainCharacter(pygame.sprite.Sprite):
 
     def __init__(self,pos,groups):
         super().__init__(groups)
-        self.image = pygame.image.load('../textures/player_test.png')
+        self.image = pygame.image.load('../textures/player_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
 class World:
@@ -21,8 +21,8 @@ class World:
         
         self.surface = pygame.display.get_surface()
         
-        self.sprites = pygame.sprite.Group()
-        self.obstacles = pygame.sprite.Group()
+        self.sprites = pygame.sprite.Group() #visible
+        self.obstacles = pygame.sprite.Group() #invisible
         
         self.map()
 
@@ -71,8 +71,8 @@ class Crawler:
                         else:
                             self.screen = pygame.display.set_mode(self.resolution)
 
-            color = pygame.Color(0, 0, 0)
-            self.screen.fill(color)
+            background = pygame.Color(0, 0, 0)
+            self.screen.fill(background)
 
             self.world.main()
 
