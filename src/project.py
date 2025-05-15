@@ -16,10 +16,9 @@ class MainCharacter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
 
         self.direction = pygame.math.Vector2()
-        self.speed = 1
+        self.speed = 5
 
-    def movement(self):
-        
+    def key_input(self):
         key = pygame.key.get_pressed()
         
         if key == [pygame.K_w]:
@@ -34,10 +33,16 @@ class MainCharacter(pygame.sprite.Sprite):
         elif key == [pygame.K_d]:
             self.direction.x = -1
         else:
-            self.direction.y = 0
+            self.direction.x = 0
 
-        self.rect.x += self.direction.x * self.speed
-        self.rect.y += self.direction.y * self.speed
+    def movement(self,speed):
+        
+        self.rect.x += self.direction.x * speed
+        self.rect.y += self.direction.y * speed
+
+    def update(self):
+        self.key_input()
+        self.movement(self.speed)
 
 class World:
 
@@ -64,7 +69,6 @@ class World:
 
         self.sprites.draw(self.surface)
         self.sprites.update()
-        print(self.character.direction)
 
 class Crawler:
 
