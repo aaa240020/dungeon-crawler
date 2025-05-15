@@ -16,7 +16,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
 
         self.direction = pygame.math.Vector2()
-        self.speed = 5
+        self.speed = 3
 
     def key_input(self):
         key = pygame.key.get_pressed()
@@ -45,6 +45,18 @@ class MainCharacter(pygame.sprite.Sprite):
         self.key_input()
         self.movement(self.speed)
 
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, pos, groups):
+        super().__init__(groups)
+        self.image = pygame.image.load('../textures/enemy.png').convert_alpha()
+        self.rect = self.image.get_rect(topleft=pos)
+        
+        self.direction = pygame.math.Vector2()
+        self.speed = 2
+
+    def update(self):
+        pass
+
 class World:
 
     def __init__(self):
@@ -65,6 +77,8 @@ class World:
                     SpriteTexture((x,y),[self.sprites, self.obstacles])
                 if col == '0':
                     self.character = MainCharacter((x,y),[self.sprites])
+                if col == 'e':
+                    Enemy((x,y),[self.sprites])
     
     def main(self):
 
