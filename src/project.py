@@ -10,13 +10,14 @@ class SpriteTexture(pygame.sprite.Sprite):
 
 class MainCharacter(pygame.sprite.Sprite):
 
-    def __init__(self,pos,groups):
+    def __init__(self, pos, groups, obsta):
         super().__init__(groups)
         self.image = pygame.image.load('../textures/player_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
         self.direction = pygame.math.Vector2()
-        self.speed = 3
+        self.speed = 5
+        self.obsta = obsta
 
     def key_input(self):
         key = pygame.key.get_pressed()
@@ -40,26 +41,33 @@ class MainCharacter(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
 
         self.rect.x += self.direction.x * speed
-        for index, sprite in enumerate(self.groups()[1]):
-            if sprite.rect.colliderect(self.rect):
-                if self.direction.x > 0:
-                    self.rect.right = sprite.rect.left
-                elif self.direction.x < 0:
-                    self.rect.left = sprite.rect.right
-
+        self.collision('x')
         self.rect.y += self.direction.y * speed
-        for index, sprite in enumerate(self.groups()[1]):
-            if sprite.rect.colliderect(self.rect):
-                if self.direction.y > 0:
-                    self.rect.bottom = sprite.rect.top
-                elif self.direction.y < 0:
-                    self.rect.top = sprite.rect.bottom
+        self.collision('y')
+
+    def collision(self,direction):
+        if direction == 'x':
+            for sprite in self.obsta:
+                if sprite.rect.colliderect(self.rect):
+                    if self.direction.x > 0:
+                        self.rect.right = sprite.rect.left
+                    elif self.direction.x < 0:
+                        self.rect.left = sprite.rect.right
+
+        if direction == 'y':
+            for sprite in self.obsta:
+                if sprite.rect.colliderect(self.rect):
+                    if self.direction.y > 0:
+                        self.rect.bottom = sprite.rect.top
+                    elif self.direction.y < 0:
+                        self.rect.top = sprite.rect.bottom
 
     def update(self):
         self.key_input()
         self.movement(self.speed)
 
 class Enemy(pygame.sprite.Sprite):
+    
     def __init__(self, pos, groups):
         super().__init__(groups)
         self.image = pygame.image.load('../textures/enemy_test.png').convert_alpha()
@@ -90,7 +98,7 @@ class World:
                 if col == 'x':
                     SpriteTexture((x,y),[self.sprites, self.obstacles])
                 if col == '0':
-                    self.character = MainCharacter((x,y),[self.sprites])
+                    self.character = MainCharacter((x,y),[self.sprites], self.obstacles)
                 if col == 'e':
                     Enemy((x,y),[self.sprites])
     
