@@ -22,16 +22,16 @@ class MainCharacter(pygame.sprite.Sprite):
     def key_input(self):
         key = pygame.key.get_pressed()
         
-        if key == [pygame.K_w]:
+        if key[pygame.K_w]:
             self.direction.y = -1
-        elif key == [pygame.K_s]:
+        elif key[pygame.K_s]:
             self.direction.y = 1
         else:
             self.direction.y = 0
                 
-        if key == [pygame.K_a]:
+        if key[pygame.K_d]:
             self.direction.x = 1
-        elif key == [pygame.K_d]:
+        elif key[pygame.K_a]:
             self.direction.x = -1
         else:
             self.direction.x = 0
