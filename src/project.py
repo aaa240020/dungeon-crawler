@@ -8,6 +8,13 @@ class SpriteTexture(pygame.sprite.Sprite):
         self.image = pygame.image.load('../textures/sprite_texture_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
+class Edges(pygame.sprite.Sprite):
+    
+    def __init__(self,pos,groups):
+        super().__init__(groups)
+        self.image = pygame.image.load('../textures/edges_test.png').convert_alpha()
+        self.rect = self.image.get_rect(topleft = pos)
+
 class MainCharacter(pygame.sprite.Sprite):
 
     def __init__(self, pos, groups, obsta):
@@ -101,6 +108,8 @@ class World:
                     self.character = MainCharacter((x,y),[self.sprites], self.obstacles)
                 if col == 'e':
                     Enemy((x,y),[self.sprites])
+                if col == '1':
+                    Edges((x,y),[self.sprites, self.obstacles])
     
     def main(self):
 
