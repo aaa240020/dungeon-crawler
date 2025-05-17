@@ -21,10 +21,17 @@ class MainCharacter(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = pygame.image.load('../textures/player_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
+        self.attacking = False
+        self.attack_cooldown = 0
 
+        self.attack_time = 2
+        
+        #self.attack_damage = 10
+        
         self.direction = pygame.math.Vector2()
         self.speed = player_speed
         self.obsta = obsta
+        
         self.stamina = 100
 
     def key_input(self):
@@ -57,10 +64,15 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             if self.stamina < 100:
                 self.stamina += 1
-
-        #print(self.stamina)
-
-
+        # attack
+        if key[pygame.K_e]:
+            if not self.attacking:
+                self.attacking = True
+                self.attack_cooldown = pygame.time.get_ticks()
+            if self.attacking:
+                if pygame.time.get_ticks() - self.attack_cooldown >= self.attack_time * 1000:
+                    self.attacking = False
+                    self.attack_cooldown = 0
 
     def movement(self,speed):
         if self.direction.magnitude() != 0:
