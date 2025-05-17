@@ -125,7 +125,7 @@ class MediumEnemy(pygame.sprite.Sprite):
         self.image = pygame.image.load('../textures/enemy2_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.direction = pygame.math.Vector2()
-        level = 5
+        level = 1.5
         
         self.speed = enemy_speed * level
 
@@ -139,7 +139,7 @@ class HardEnemy(pygame.sprite.Sprite):
         self.image = pygame.image.load('../textures/enemy3_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.direction = pygame.math.Vector2()
-        level = 10
+        level = 2
         
         self.speed = enemy_speed * level
 
@@ -153,7 +153,7 @@ class FinalEnemy(pygame.sprite.Sprite):
         self.image = pygame.image.load('../textures/enemy4_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.direction = pygame.math.Vector2()
-        level = 15
+        level = 2.5
         
         self.speed = enemy_speed * level
 
