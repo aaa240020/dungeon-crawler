@@ -25,6 +25,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.attack_cooldown = 0
         self.direction = pygame.math.Vector2()
         self.obsta = obsta
+        self.look = 'down'
 
         self.attack_time = 2 / level
         
@@ -74,6 +75,44 @@ class MainCharacter(pygame.sprite.Sprite):
                     self.attacking = False
                     self.attack_cooldown = 0
 
+    def look_direction(self):
+        if self.direction.x == 1:
+            self.look = 'right'
+        elif self.direction.x == -1:
+            self.look = 'left'
+        elif self.direction.y == 1:
+            self.look = 'down'
+        elif self.direction.y == -1:
+            self.look = 'up'
+        # diagonals
+        elif self.direction.x == 1 and self.direction.y == 1:
+            self.look = 'downright'
+        elif self.direction.x == 1 and self.direction.y == -1:
+            self.look = 'upright'
+        elif self.direction.x == -1 and self.direction.y == 1:
+            self.look = 'downleft'
+        elif self.direction.x == -1 and self.direction.y == -1:
+            self.look = 'upleft'
+        # images
+        if self.direction.magnitude() != 0:
+            if self.look == 'right':
+                self.image = pygame.image.load('../textures/playerright_test.png').convert_alpha()
+            elif self.look == 'left':
+                self.image = pygame.image.load('../textures/playerleft_test.png').convert_alpha()
+            elif self.look == 'down':
+                self.image = pygame.image.load('../textures/playerdown_test.png').convert_alpha()
+            elif self.look == 'up':
+                self.image = pygame.image.load('../textures/playerup_test.png').convert_alpha()
+            # diagonal images
+            elif self.look == 'downright':
+                self.image = pygame.image.load('../textures/playerdownright_test.png').convert_alpha()
+            elif self.look == 'upright':
+                self.image = pygame.image.load('../textures/playerupright_test.png').convert_alpha()
+            elif self.look == 'downleft':
+                self.image = pygame.image.load('../textures/playerdownleft_test.png').convert_alpha()
+            elif self.look == 'upleft':
+                self.image = pygame.image.load('../textures/playerupleft_test.png').convert_alpha()
+
     def movement(self,speed):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
@@ -102,6 +141,7 @@ class MainCharacter(pygame.sprite.Sprite):
 
     def update(self):
         self.key_input()
+        self.look_direction()
         self.movement(self.speed)
 
 class EasyEnemy(pygame.sprite.Sprite):
