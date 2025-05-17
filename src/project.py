@@ -1,5 +1,5 @@
 import pygame
-from map import *
+from crawlerinfo import *
 
 class SpriteTexture(pygame.sprite.Sprite):
 
@@ -16,7 +16,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
 
         self.direction = pygame.math.Vector2()
-        self.speed = 5
+        self.speed = player_speed
         self.obsta = obsta
 
     def key_input(self):
@@ -74,7 +74,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         
         self.direction = pygame.math.Vector2()
-        self.speed = 2
+        self.speed = enemy_speed
 
     def update(self):
         pass

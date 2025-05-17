@@ -1,3 +1,5 @@
+player_speed = 5
+enemy_speed = 3
 tile_size = 64
 FACE_MAP = [
 ['x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x'],
