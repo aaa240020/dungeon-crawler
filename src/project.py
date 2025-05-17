@@ -25,30 +25,30 @@ class MainCharacter(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2()
         self.speed = player_speed
         self.obsta = obsta
+        self.stamina = 100
 
     def key_input(self):
         key = pygame.key.get_pressed()
-        
+        # up and down
         if key[pygame.K_w]:
             self.direction.y = -1
         elif key[pygame.K_s]:
             self.direction.y = 1
         else:
             self.direction.y = 0
-                
+        # right and left
         if key[pygame.K_d]:
             self.direction.x = 1
         elif key[pygame.K_a]:
             self.direction.x = -1
         else:
             self.direction.x = 0
-
+        # running
         if key[pygame.K_LSHIFT]:
             self.speed = player_speed * 1.5
         else:
             self.speed = player_speed
-
-    def stamina(self):
+        # stamina
         if self.speed == player_speed * 1.5:
             self.stamina -= 1
             if self.stamina <= 0:
@@ -57,6 +57,8 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             if self.stamina < 100:
                 self.stamina += 1
+
+        #print(self.stamina)
 
 
 
