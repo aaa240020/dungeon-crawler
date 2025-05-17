@@ -29,12 +29,17 @@ class MainCharacter(pygame.sprite.Sprite):
         self.level = level
 
         self.attack_time = 2 / level
-        
-        #self.attack_damage = 10 * level
 
-        #self.health = 100 * level
-        
-        self.stamina = 100 * level
+        self.stats = {
+            'health': 100 * level,
+            'stamina': 100 * level,
+            'attack': 10 * level,
+            'speed': 5 * level,
+        }
+
+        self.health = self.stats['health']
+        self.stamina = self.stats['stamina']
+        self.attack_damage = self.stats['attack']
 
     def key_input(self):
         key = pygame.key.get_pressed()
@@ -67,6 +72,16 @@ class MainCharacter(pygame.sprite.Sprite):
             if self.stamina < 100:
                 self.stamina += 1
         # attack
+        self.surface = pygame.display.get_surface()
+        attack_bar = pygame.Rect(30, 80, 200, 20)
+        pygame.draw.rect(self.surface, (125,125,125), attack_bar)
+        if pygame.time.get_ticks() - self.attack_cooldown >= self.attack_time * 1000:
+            pygame.draw.rect(self.surface, (0,0,255), attack_bar)
+            pygame.draw.rect(self.surface, (25,25,25), attack_bar, 3)
+        else:
+            pygame.draw.rect(self.surface, (125,125,125), attack_bar)
+            pygame.draw.rect(self.surface, (25,25,25), attack_bar, 3)
+
         if key[pygame.K_SPACE]:
             if not self.attacking:
                 self.attacking = True
@@ -226,9 +241,11 @@ class World:
         
         self.sprites = pygame.sprite.Group() #visible
         self.obstacles = pygame.sprite.Group() #invisible
-        self.player_level = 2.5
+        self.player_level = 1
         
         self.map()
+
+        self.ui = UI()
 
     def map(self):
         for rindex,row in enumerate(FACE_MAP):
@@ -254,6 +271,37 @@ class World:
 
         self.sprites.draw(self.surface)
         self.sprites.update()
+        self.ui.display(self.character)
+
+class UI:
+
+    def __init__(self):
+        self.surface = pygame.display.get_surface()
+        self.font = pygame.font.Font('../src/ARCADECLASSIC.ttf', 30)
+        self.health_bar = pygame.Rect(30, 20, 200, 20)
+        self.stamina_bar = pygame.Rect(30, 50, 200, 20)
+        self.health_bar_color = (255, 0, 0)
+        self.stamina_bar_color = (0, 255, 0)
+        self.bg_color = (125, 125, 125)
+        pygame.draw.rect(self.surface, self.bg_color, self.health_bar)
+        pygame.draw.rect(self.surface, self.bg_color, self.stamina_bar)
+
+    def ui_elements(self,current,max_value,background,color):
+        pygame.draw.rect(self.surface, self.bg_color, background)
+
+        ratio = current / max_value
+        width = background.width * ratio
+        new_rect = background.copy()
+        new_rect.width = width
+
+        pygame.draw.rect(self.surface, color, new_rect)
+        pygame.draw.rect(self.surface, (25,25,25), background, 3)
+
+    def display(self,player):
+        self.ui_elements(player.health, player.stats['health'], self.health_bar, self.health_bar_color)
+        self.ui_elements(player.stamina, player.stats['stamina'], self.stamina_bar, self.stamina_bar_color)
+
+
 
 class Crawler:
 
