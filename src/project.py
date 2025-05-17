@@ -43,6 +43,23 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
 
+        if key[pygame.K_LSHIFT]:
+            self.speed = player_speed * 1.5
+        else:
+            self.speed = player_speed
+
+    def stamina(self):
+        if self.speed == player_speed * 1.5:
+            self.stamina -= 1
+            if self.stamina <= 0:
+                self.speed = player_speed
+                self.stamina = 0
+        else:
+            if self.stamina < 100:
+                self.stamina += 1
+
+
+
     def movement(self,speed):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
