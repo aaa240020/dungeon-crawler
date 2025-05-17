@@ -138,7 +138,9 @@ class Crawler:
                         else:
                             self.screen = pygame.display.set_mode(self.resolution)
 
-            background = pygame.image.load('../textures/enemy_test.png').convert_alpha()
+            background = pygame.image.load('../textures/background.png').convert_alpha()
+            fill = (0,0,0)
+            self.screen.fill(fill)
             self.screen.blit(background, (0,0))
 
             self.world.main()
