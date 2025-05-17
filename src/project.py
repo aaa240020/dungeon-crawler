@@ -68,7 +68,7 @@ class MainCharacter(pygame.sprite.Sprite):
             if self.stamina < 100:
                 self.stamina += 1
         # attack
-        if key[pygame.K_e]:
+        if key[pygame.K_SPACE]:
             if not self.attacking:
                 self.attacking = True
                 self.attack_cooldown = pygame.time.get_ticks()
@@ -78,23 +78,61 @@ class MainCharacter(pygame.sprite.Sprite):
                     self.attack_cooldown = 0
 
     def look_direction(self):
-        if self.direction.x == 1 and self.direction.y == 0:
-            self.look = 'right'
-        elif self.direction.x == -1 and self.direction.y == 0:
-            self.look = 'left'
-        elif self.direction.y == 1 and self.direction.x == 0:
-            self.look = 'down'
-        elif self.direction.y == -1 and self.direction.x == 0:
-            self.look = 'up'
-        # diagonals
-        elif self.direction.x == 1 and self.direction.y == 1:
-            self.look = 'downright'
-        elif self.direction.x == 1 and self.direction.y == -1:
-            self.look = 'upright'
-        elif self.direction.x == -1 and self.direction.y == 1:
-            self.look = 'downleft'
-        elif self.direction.x == -1 and self.direction.y == -1:
-            self.look = 'upleft'
+        if self.attack_cooldown == 0:
+            # up and down
+            if self.direction.x == 1 and self.direction.y == 0:
+                self.look = 'right'
+            elif self.direction.x == -1 and self.direction.y == 0:
+                self.look = 'left'
+            elif self.direction.y == 1 and self.direction.x == 0:
+                self.look = 'down'
+            elif self.direction.y == -1 and self.direction.x == 0:
+                self.look = 'up'
+            # diagonals
+            elif self.direction.x == 1 and self.direction.y == 1:
+                self.look = 'downright'
+            elif self.direction.x == 1 and self.direction.y == -1:
+                self.look = 'upright'
+            elif self.direction.x == -1 and self.direction.y == 1:
+                self.look = 'downleft'
+            elif self.direction.x == -1 and self.direction.y == -1:
+                self.look = 'upleft'
+        # attack
+        if self.attack_cooldown != 0:
+            if self.direction.x == 1 and self.direction.y == 0:
+                self.look = 'attackright'
+            elif self.direction.x == -1 and self.direction.y == 0:
+                self.look = 'attackleft'
+            elif self.direction.y == 1 and self.direction.x == 0:
+                self.look = 'attackdown'
+            elif self.direction.y == -1 and self.direction.x == 0:
+                self.look = 'attackup'
+            elif self.direction.x == 1 and self.direction.y == 1:
+                self.look = 'attackdownright'
+            elif self.direction.x == 1 and self.direction.y == -1:
+                self.look = 'attackupright'
+            elif self.direction.x == -1 and self.direction.y == 1:
+                self.look = 'attackdownleft'
+            elif self.direction.x == -1 and self.direction.y == -1:
+                self.look = 'attackupleft'
+        # attack images
+        if self.direction.magnitude() != 0:
+            if self.look == 'attackright':
+                self.image = pygame.image.load('../textures/attackright_test.png').convert_alpha()
+            elif self.look == 'attackleft':
+                self.image = pygame.image.load('../textures/attackleft_test.png').convert_alpha()
+            elif self.look == 'attackdown':
+                self.image = pygame.image.load('../textures/attackdown_test.png').convert_alpha()
+            elif self.look == 'attackup':
+                self.image = pygame.image.load('../textures/attackup_test.png').convert_alpha()
+            elif self.look == 'attackdownright':
+                self.image = pygame.image.load('../textures/attackdownright_test.png').convert_alpha()
+            elif self.look == 'attackupright':
+                self.image = pygame.image.load('../textures/attackupright_test.png').convert_alpha()
+            elif self.look == 'attackdownleft':
+                self.image = pygame.image.load('../textures/attackdownleft_test.png').convert_alpha()
+            elif self.look == 'attackupleft':
+                self.image = pygame.image.load('../textures/attackupleft_test.png').convert_alpha()
         # images
         if self.direction.magnitude() != 0:
             if self.look == 'right':
