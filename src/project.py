@@ -19,7 +19,7 @@ class MainCharacter(pygame.sprite.Sprite):
 
     def __init__(self, pos, groups, obsta, level):
         super().__init__(groups)
-        self.image = pygame.image.load('../textures/player_test.png').convert_alpha()
+        self.image = pygame.image.load('../textures/playerdown_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
         self.attacking = False
         self.attack_cooldown = 0
@@ -30,6 +30,8 @@ class MainCharacter(pygame.sprite.Sprite):
         self.attack_time = 2 / level
         
         #self.attack_damage = 10 * level
+
+        #self.health = 100 * level
         
         self.speed = player_speed * level
         
@@ -53,11 +55,11 @@ class MainCharacter(pygame.sprite.Sprite):
             self.direction.x = 0
         # running
         if key[pygame.K_LSHIFT]:
-            self.speed = player_speed * 1.5
+            self.speed = player_speed * 1.4
         else:
             self.speed = player_speed
         # stamina
-        if self.speed == player_speed * 1.5:
+        if self.speed == player_speed * 1.4:
             self.stamina -= 1
             if self.stamina <= 0:
                 self.speed = player_speed
@@ -76,13 +78,13 @@ class MainCharacter(pygame.sprite.Sprite):
                     self.attack_cooldown = 0
 
     def look_direction(self):
-        if self.direction.x == 1:
+        if self.direction.x == 1 and self.direction.y == 0:
             self.look = 'right'
-        elif self.direction.x == -1:
+        elif self.direction.x == -1 and self.direction.y == 0:
             self.look = 'left'
-        elif self.direction.y == 1:
+        elif self.direction.y == 1 and self.direction.x == 0:
             self.look = 'down'
-        elif self.direction.y == -1:
+        elif self.direction.y == -1 and self.direction.x == 0:
             self.look = 'up'
         # diagonals
         elif self.direction.x == 1 and self.direction.y == 1:
