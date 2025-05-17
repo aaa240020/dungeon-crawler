@@ -12,7 +12,7 @@ class Edges(pygame.sprite.Sprite):
     
     def __init__(self,pos,groups):
         super().__init__(groups)
-        self.image = pygame.image.load('../textures/edges_test.png').convert_alpha()
+        self.image = pygame.image.load('../textures/edges3.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
 class MainCharacter(pygame.sprite.Sprite):
@@ -28,7 +28,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.look = 'down'
         self.level = level
 
-        self.attack_time = 2 / level
+        self.attack_time = 3 / level
 
         self.stats = {
             'health': 100 * level,
@@ -334,7 +334,7 @@ class Crawler:
                         else:
                             self.screen = pygame.display.set_mode(self.resolution)
 
-            background = pygame.image.load('../textures/background.png').convert_alpha()
+            background = pygame.image.load('../textures/background2.png').convert_alpha()
             fill = (0,0,0)
             self.screen.fill(fill)
             self.screen.blit(background, (0,0))
