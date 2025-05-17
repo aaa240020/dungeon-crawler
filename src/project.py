@@ -17,22 +17,22 @@ class Edges(pygame.sprite.Sprite):
 
 class MainCharacter(pygame.sprite.Sprite):
 
-    def __init__(self, pos, groups, obsta):
+    def __init__(self, pos, groups, obsta, level):
         super().__init__(groups)
         self.image = pygame.image.load('../textures/player_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
         self.attacking = False
         self.attack_cooldown = 0
-
-        self.attack_time = 2
-        
-        #self.attack_damage = 10
-        
         self.direction = pygame.math.Vector2()
-        self.speed = player_speed
         self.obsta = obsta
+
+        self.attack_time = 2 / level
         
-        self.stamina = 100
+        #self.attack_damage = 10 * level
+        
+        self.speed = player_speed * level
+        
+        self.stamina = 100 * level
 
     def key_input(self):
         key = pygame.key.get_pressed()
@@ -104,15 +104,58 @@ class MainCharacter(pygame.sprite.Sprite):
         self.key_input()
         self.movement(self.speed)
 
-class Enemy(pygame.sprite.Sprite):
+class EasyEnemy(pygame.sprite.Sprite):
     
     def __init__(self, pos, groups):
         super().__init__(groups)
-        self.image = pygame.image.load('../textures/enemy_test.png').convert_alpha()
+        self.image = pygame.image.load('../textures/enemy1_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
-        
         self.direction = pygame.math.Vector2()
-        self.speed = enemy_speed
+        level = 1
+        
+        self.speed = enemy_speed * level
+
+    def update(self):
+        pass
+
+class MediumEnemy(pygame.sprite.Sprite):
+    
+    def __init__(self, pos, groups):
+        super().__init__(groups)
+        self.image = pygame.image.load('../textures/enemy2_test.png').convert_alpha()
+        self.rect = self.image.get_rect(topleft=pos)
+        self.direction = pygame.math.Vector2()
+        level = 5
+        
+        self.speed = enemy_speed * level
+
+    def update(self):
+        pass
+
+class HardEnemy(pygame.sprite.Sprite):
+    
+    def __init__(self, pos, groups):
+        super().__init__(groups)
+        self.image = pygame.image.load('../textures/enemy3_test.png').convert_alpha()
+        self.rect = self.image.get_rect(topleft=pos)
+        self.direction = pygame.math.Vector2()
+        level = 10
+        
+        self.speed = enemy_speed * level
+
+    def update(self):
+        pass
+
+class FinalEnemy(pygame.sprite.Sprite):
+    
+    def __init__(self, pos, groups):
+        super().__init__(groups)
+        self.image = pygame.image.load('../textures/enemy4_test.png').convert_alpha()
+        self.rect = self.image.get_rect(topleft=pos)
+        self.direction = pygame.math.Vector2()
+        level = 15
+        
+        self.speed = enemy_speed * level
 
     def update(self):
         pass
@@ -125,6 +168,7 @@ class World:
         
         self.sprites = pygame.sprite.Group() #visible
         self.obstacles = pygame.sprite.Group() #invisible
+        self.player_level = 1
         
         self.map()
 
@@ -136,9 +180,15 @@ class World:
                 if col == 'x':
                     SpriteTexture((x,y),[self.sprites, self.obstacles])
                 if col == '0':
-                    self.character = MainCharacter((x,y),[self.sprites], self.obstacles)
+                    self.character = MainCharacter((x,y),[self.sprites], self.obstacles, self.player_level)
                 if col == 'e':
-                    Enemy((x,y),[self.sprites])
+                    EasyEnemy((x,y),[self.sprites])
+                if col == 'm':
+                    MediumEnemy((x,y),[self.sprites])
+                if col == 'h':
+                    HardEnemy((x,y),[self.sprites])
+                if col == 'f':
+                    FinalEnemy((x,y),[self.sprites])
                 if col == '1':
                     Edges((x,y),[self.sprites, self.obstacles])
     
