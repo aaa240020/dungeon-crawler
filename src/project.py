@@ -35,11 +35,13 @@ class MainCharacter(pygame.sprite.Sprite):
             'stamina': 100 * level,
             'attack': 10 * level,
             'speed': 5 * level,
+            'attack_range': 50,
         }
 
         self.health = self.stats['health']
         self.stamina = self.stats['stamina']
         self.attack_damage = self.stats['attack']
+        self.attack_range = self.stats['attack_range']
 
     def key_input(self):
         key = pygame.key.get_pressed()
@@ -69,8 +71,8 @@ class MainCharacter(pygame.sprite.Sprite):
                 self.speed = player_speed
                 self.stamina = 0
         else:
-            if self.stamina < 100:
-                self.stamina += 1
+            if self.stamina < self.stats['stamina']:
+                self.stamina += 1 * self.level
         # attack
         self.surface = pygame.display.get_surface()
         attack_bar = pygame.Rect(30, 80, 200, 20)
@@ -179,17 +181,100 @@ class MainCharacter(pygame.sprite.Sprite):
 
 class EasyEnemy(pygame.sprite.Sprite):
     
-    def __init__(self, pos, groups):
+    def __init__(self, pos, groups, obsta):
         super().__init__(groups)
         self.image = pygame.image.load('../textures/enemy1_test.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.direction = pygame.math.Vector2()
-        level = 1
+        self.obsta = obsta
+        self.speed = enemy_speed
+        self.level = 2.4
+
+        self.stats = {
+            'health': 20 * self.level,
+            'attack': 10 * self.level,
+            'speed': enemy_speed * self.level,
+            'attack_range': 50,
+            'agro_range': 200 * self.level,
+        }
+
+        self.health = self.stats['health']
+        self.attack_damage = self.stats['attack']
+        self.attack_range = self.stats['attack_range']
+        self.agro_range = self.stats['agro_range']
+
+    def player_location(self,player):
+
+        enemy_vector = pygame.math.Vector2(self.rect.center)
+        player_vector = pygame.math.Vector2(player.rect.center)
+        distance = (player_vector - enemy_vector).magnitude()
         
-        self.speed = enemy_speed * level
+        if distance > 0:
+            direction = (player_vector - enemy_vector).normalize()
+        else:
+            direction = pygame.math.Vector2(0, 0)
+        
+        return (distance, direction)
+
+    def detect_player(self, player):
+
+        distance, _ = self.player_location(player)
+        
+        if distance <= self.attack_range:
+            self.status = 'attack'
+        elif distance <= self.agro_range:
+            self.status = 'agro'
+        else:
+            self.status = 'idle'
+
+    def actions(self,player):
+        if self.status == 'attack':
+            self.direction = pygame.math.Vector2(0, 0)
+            player.health -= self.attack_damage
+        elif self.status == 'agro':
+            self.direction = self.player_location(player)[1]
+        elif self.status == 'idle':
+            self.direction = pygame.math.Vector2(0, 0)
+
+    def movement(self,speed,level):
+        if self.direction.magnitude() != 0:
+            self.direction = self.direction.normalize()
+
+        self.rect.x += self.direction.x * speed * level
+        self.collision('x')
+        self.rect.y += self.direction.y * speed * level
+        self.collision('y')
+
+    def collision(self,direction):
+        if direction == 'x':
+            for sprite in self.obsta:
+                if sprite.rect.colliderect(self.rect):
+                    if self.direction.x > 0:
+                        self.rect.right = sprite.rect.left
+                    elif self.direction.x < 0:
+                        self.rect.left = sprite.rect.right
+
+        if direction == 'y':
+            for sprite in self.obsta:
+                if sprite.rect.colliderect(self.rect):
+                    if self.direction.y > 0:
+                        self.rect.bottom = sprite.rect.top
+                    elif self.direction.y < 0:
+                        self.rect.top = sprite.rect.bottom
+
+    #def kill():
 
     def update(self):
-        pass
+        
+        self.movement(self.speed, self.level)
+        
+    def eupdate(self,player):
+        self.detect_player(player)
+        self.actions(player)
+        
+        #if self.health <= 0:
+           # self.kill()
+            #print('enemy dead')
 
 class MediumEnemy(pygame.sprite.Sprite):
     
@@ -241,7 +326,8 @@ class World:
         
         self.sprites = pygame.sprite.Group() #visible
         self.obstacles = pygame.sprite.Group() #invisible
-        self.player_level = 1
+        self.enemies = pygame.sprite.Group() #enemies
+        self.player_level = 2.6
         
         self.map()
 
@@ -257,7 +343,8 @@ class World:
                 if col == '0':
                     self.character = MainCharacter((x,y),[self.sprites], self.obstacles, self.player_level)
                 if col == 'e':
-                    EasyEnemy((x,y),[self.sprites])
+                    EasyEnemy((x,y),[self.sprites], self.obstacles)
+                    self.enemies.add(EasyEnemy((x,y),[self.sprites], self.obstacles))
                 if col == 'm':
                     MediumEnemy((x,y),[self.sprites])
                 if col == 'h':
@@ -272,6 +359,9 @@ class World:
         self.sprites.draw(self.surface)
         self.sprites.update()
         self.ui.display(self.character)
+
+        for enemy in self.enemies:
+            enemy.eupdate(self.character)
 
 class UI:
 
