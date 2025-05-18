@@ -35,7 +35,7 @@ class MainCharacter(pygame.sprite.Sprite):
             'stamina': 100 * level,
             'attack': 10 * level,
             'speed': 5 * level,
-            'attack_range': 50,
+            'attack_range': 100 * level,
         }
 
         self.health = self.stats['health']
@@ -73,7 +73,7 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             if self.stamina < self.stats['stamina']:
                 self.stamina += 1 * self.level
-        # attack
+        # attack bar
         self.surface = pygame.display.get_surface()
         attack_bar = pygame.Rect(30, 80, 200, 20)
         pygame.draw.rect(self.surface, (125,125,125), attack_bar)
@@ -83,7 +83,7 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             pygame.draw.rect(self.surface, (125,125,125), attack_bar)
             pygame.draw.rect(self.surface, (25,25,25), attack_bar, 3)
-
+        # attack
         if key[pygame.K_SPACE]:
             if not self.attacking:
                 self.attacking = True
@@ -203,6 +203,10 @@ class EasyEnemy(pygame.sprite.Sprite):
         self.attack_range = self.stats['attack_range']
         self.agro_range = self.stats['agro_range']
 
+        self.can_attack = True
+        self.attack_time = None
+        self.attack_cooldown = 400
+
     def player_location(self,player):
 
         enemy_vector = pygame.math.Vector2(self.rect.center)
@@ -218,9 +222,9 @@ class EasyEnemy(pygame.sprite.Sprite):
 
     def detect_player(self, player):
 
-        distance, _ = self.player_location(player)
+        distance = self.player_location(player)[0]
         
-        if distance <= self.attack_range:
+        if distance <= self.attack_range and self.can_attack:
             self.status = 'attack'
         elif distance <= self.agro_range:
             self.status = 'agro'
@@ -229,6 +233,7 @@ class EasyEnemy(pygame.sprite.Sprite):
 
     def actions(self,player):
         if self.status == 'attack':
+            self.attack_time = pygame.time.get_ticks()
             self.direction = pygame.math.Vector2(0, 0)
             player.health -= self.attack_damage
         elif self.status == 'agro':
@@ -264,9 +269,18 @@ class EasyEnemy(pygame.sprite.Sprite):
 
     #def kill():
 
+    def cooldown(self):
+        if self.can_attack:
+            self.attack_time = pygame.time.get_ticks()
+            self.can_attack = False
+        if not self.can_attack:
+            if pygame.time.get_ticks() - self.attack_time >= self.attack_cooldown:
+                self.can_attack = True
+
     def update(self):
         
         self.movement(self.speed, self.level)
+        self.cooldown()
         
     def eupdate(self,player):
         self.detect_player(player)
@@ -300,6 +314,10 @@ class MediumEnemy(pygame.sprite.Sprite):
         self.attack_range = self.stats['attack_range']
         self.agro_range = self.stats['agro_range']
 
+        self.can_attack = True
+        self.attack_time = None
+        self.attack_cooldown = 400
+
     def player_location(self,player):
 
         enemy_vector = pygame.math.Vector2(self.rect.center)
@@ -315,9 +333,9 @@ class MediumEnemy(pygame.sprite.Sprite):
 
     def detect_player(self, player):
 
-        distance, _ = self.player_location(player)
+        distance = self.player_location(player)[0]
         
-        if distance <= self.attack_range:
+        if distance <= self.attack_range and self.can_attack:
             self.status = 'attack'
         elif distance <= self.agro_range:
             self.status = 'agro'
@@ -326,6 +344,7 @@ class MediumEnemy(pygame.sprite.Sprite):
 
     def actions(self,player):
         if self.status == 'attack':
+            self.attack_time = pygame.time.get_ticks()
             self.direction = pygame.math.Vector2(0, 0)
             player.health -= self.attack_damage
         elif self.status == 'agro':
@@ -361,9 +380,18 @@ class MediumEnemy(pygame.sprite.Sprite):
 
     #def kill():
 
+    def cooldown(self):
+        if self.can_attack:
+            self.attack_time = pygame.time.get_ticks()
+            self.can_attack = False
+        if not self.can_attack:
+            if pygame.time.get_ticks() - self.attack_time >= self.attack_cooldown:
+                self.can_attack = True
+
     def update(self):
         
         self.movement(self.speed, self.level)
+        self.cooldown()
         
     def eupdate(self,player):
         self.detect_player(player)
@@ -397,6 +425,10 @@ class HardEnemy(pygame.sprite.Sprite):
         self.attack_range = self.stats['attack_range']
         self.agro_range = self.stats['agro_range']
 
+        self.can_attack = True
+        self.attack_time = None
+        self.attack_cooldown = 400
+
     def player_location(self,player):
 
         enemy_vector = pygame.math.Vector2(self.rect.center)
@@ -412,9 +444,9 @@ class HardEnemy(pygame.sprite.Sprite):
 
     def detect_player(self, player):
 
-        distance, _ = self.player_location(player)
+        distance = self.player_location(player)[0]
         
-        if distance <= self.attack_range:
+        if distance <= self.attack_range and self.can_attack:
             self.status = 'attack'
         elif distance <= self.agro_range:
             self.status = 'agro'
@@ -423,6 +455,7 @@ class HardEnemy(pygame.sprite.Sprite):
 
     def actions(self,player):
         if self.status == 'attack':
+            self.attack_time = pygame.time.get_ticks()
             self.direction = pygame.math.Vector2(0, 0)
             player.health -= self.attack_damage
         elif self.status == 'agro':
@@ -458,9 +491,18 @@ class HardEnemy(pygame.sprite.Sprite):
 
     #def kill():
 
+    def cooldown(self):
+        if self.can_attack:
+            self.attack_time = pygame.time.get_ticks()
+            self.can_attack = False
+        if not self.can_attack:
+            if pygame.time.get_ticks() - self.attack_time >= self.attack_cooldown:
+                self.can_attack = True
+
     def update(self):
         
         self.movement(self.speed, self.level)
+        self.cooldown()
         
     def eupdate(self,player):
         self.detect_player(player)
@@ -494,6 +536,10 @@ class FinalEnemy(pygame.sprite.Sprite):
         self.attack_range = self.stats['attack_range']
         self.agro_range = self.stats['agro_range']
 
+        self.can_attack = True
+        self.attack_time = None
+        self.attack_cooldown = 400
+
     def player_location(self,player):
 
         enemy_vector = pygame.math.Vector2(self.rect.center)
@@ -509,9 +555,9 @@ class FinalEnemy(pygame.sprite.Sprite):
 
     def detect_player(self, player):
 
-        distance, _ = self.player_location(player)
+        distance = self.player_location(player)[0]
         
-        if distance <= self.attack_range:
+        if distance <= self.attack_range and self.can_attack:
             self.status = 'attack'
         elif distance <= self.agro_range:
             self.status = 'agro'
@@ -520,6 +566,7 @@ class FinalEnemy(pygame.sprite.Sprite):
 
     def actions(self,player):
         if self.status == 'attack':
+            self.attack_time = pygame.time.get_ticks()
             self.direction = pygame.math.Vector2(0, 0)
             player.health -= self.attack_damage
         elif self.status == 'agro':
@@ -555,9 +602,18 @@ class FinalEnemy(pygame.sprite.Sprite):
 
     #def kill():
 
+    def cooldown(self):
+        if self.can_attack:
+            self.attack_time = pygame.time.get_ticks()
+            self.can_attack = False
+        if not self.can_attack:
+            if pygame.time.get_ticks() - self.attack_time >= self.attack_cooldown:
+                self.can_attack = True
+
     def update(self):
         
         self.movement(self.speed, self.level)
+        self.cooldown()
         
     def eupdate(self,player):
         self.detect_player(player)
