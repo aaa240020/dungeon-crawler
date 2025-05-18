@@ -28,7 +28,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.look = 'down'
         self.level = level
 
-        self.attack_time = 2.5 / level
+        self.attack_time = 3 / level
 
         self.stats = {
             'health': 100 * level,
@@ -42,9 +42,6 @@ class MainCharacter(pygame.sprite.Sprite):
         self.stamina = self.stats['stamina']
         self.attack_damage = self.stats['attack']
         self.attack_range = self.stats['attack_range']
-
-    def player_damage(self):
-        return self.attack_damage
 
     def key_input(self):
         key = pygame.key.get_pressed()
@@ -210,10 +207,6 @@ class EasyEnemy(pygame.sprite.Sprite):
         self.attack_time = None
         self.attack_cooldown = 400
 
-        self.vulnerable = True
-        self.hit_time = None
-        self.invinduration = 400
-
     def player_location(self,player):
 
         enemy_vector = pygame.math.Vector2(self.rect.center)
@@ -274,6 +267,8 @@ class EasyEnemy(pygame.sprite.Sprite):
                     elif self.direction.y < 0:
                         self.rect.top = sprite.rect.bottom
 
+    #def kill():
+
     def cooldown(self):
         if self.can_attack:
             self.attack_time = pygame.time.get_ticks()
@@ -282,37 +277,18 @@ class EasyEnemy(pygame.sprite.Sprite):
             if pygame.time.get_ticks() - self.attack_time >= self.attack_cooldown:
                 self.can_attack = True
 
-        if not self.vulnerable:
-            if pygame.time.get_ticks() - self.hit_time >= self.invinduration:
-                self.vulnerable = True
-
-    def damaged(self, player):
-
-        if self.vulnerable:
-            self.direction = self.player_location(player)[1]
-            if player.attack_cooldown == 0:
-                self.health -= player.player_damage()
-                self.hit_time = pygame.time.get_ticks()
-                self.vulnerable = False
-
-    def reaction(self):
-        if not self.vulnerable:
-            self.direction *= -3
-
-    def killed(self):
-        if self.health <= 0:
-           self.kill()
-           print('enemy dead')
-
     def update(self):
         
         self.movement(self.speed, self.level)
         self.cooldown()
-        self.killed()
         
     def eupdate(self,player):
         self.detect_player(player)
         self.actions(player)
+        
+        #if self.health <= 0:
+           # self.kill()
+            #print('enemy dead')
 
 class MediumEnemy(pygame.sprite.Sprite):
     
@@ -656,13 +632,10 @@ class World:
         self.sprites = pygame.sprite.Group() #visible
         self.obstacles = pygame.sprite.Group() #invisible
         self.enemies = pygame.sprite.Group() #enemies
-
-        self.attack_sprites = pygame.sprite.Group() #attack sprites
-        self.attackable = pygame.sprite.Group() #attackable objects
-
-        self.player_level = 2.6
+        self.player_level = 1
         
         self.map()
+
         self.ui = UI()
 
     def map(self):
@@ -675,7 +648,7 @@ class World:
                 if col == '0':
                     self.character = MainCharacter((x,y),[self.sprites], self.obstacles, self.player_level)
                 if col == 'e':
-                    EasyEnemy((x,y),[self.sprites, self.attackable], self.obstacles)
+                    EasyEnemy((x,y),[self.sprites], self.obstacles)
                     self.enemies.add(EasyEnemy((x,y),[self.sprites], self.obstacles))
                 if col == 'm':
                     MediumEnemy((x,y),[self.sprites], self.obstacles)
@@ -688,17 +661,7 @@ class World:
                     self.enemies.add(FinalEnemy((x,y),[self.sprites], self.obstacles))
                 if col == '1':
                     Edges((x,y),[self.sprites, self.obstacles])
-
-    def player_attack(self):
-        if self.attack_sprites:
-            for sprite in self.attack_sprites:
-                collision_sprites = pygame.sprite.spritecollide(self.attack_sprites, self.attackable, False)
-                if collision_sprites:
-                    for target_sprite in collision_sprites:
-                        target_sprite.kill()
-                    else:
-                        target_sprite.damaged(self.player)
-                        
+    
     def main(self):
 
         self.sprites.draw(self.surface)
@@ -707,11 +670,6 @@ class World:
 
         for enemy in self.enemies:
             enemy.eupdate(self.character)
-
-        if self.character.attacking:
-            for enemy in self.enemies:
-                enemy.damaged(self.character)
-                enemy.killed()
 
 class UI:
 
